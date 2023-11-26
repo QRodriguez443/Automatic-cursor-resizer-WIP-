@@ -16,16 +16,27 @@ def check_registry(): #Check cursor size
 
 settings_window = win32gui.FindWindow(None, "Settings")
 #In case settings is already open, close
-if settings_window == '7996344': #ID number for settings
-    win32gui.PostMessage(settings_window, win32con.WM_CLOSE, 0, 0)
-    print("Closing settings, re-opening...")
-    time.sleep(1)
-    settings_window = win32gui.FindWindow(None, "Settings")
-    if settings_window == '7996344': #If the settings window failed to close
+if settings_window == True: #evaluates to a value other than 0
+    while True:
         win32gui.PostMessage(settings_window, win32con.WM_CLOSE, 0, 0)
-        print("Close failed, retrying...")
+        print("Closing settings, re-opening...")
         time.sleep(1)
+        settings_window = win32gui.FindWindow(None, "Settings")
+        if settings_window == False:
+            break
 os.startfile("ms-settings:")
+time.sleep(1)
+settings_window = win32gui.FindWindow(None, "Settings")
+if settings_window == False: #In case settings fails to open, try again
+    while True:
+        print(settings_window)
+        time.sleep(1)
+        os.startfile("ms-settings:")
+        time.sleep(1)
+        settings_window = win32gui.FindWindow(None, "Settings")
+        if settings_window == True:
+            break
+
 #All timings were tweaked for optimal speed and function
 # Opens the Settings app in windows 10+, navigates to Accessibility, Mouse Pointer, and adjusts size slider.
 
