@@ -9,32 +9,42 @@ import winreg
 def check_registry(): #Check cursor size
     key_path = r"Control Panel\Cursors"
     reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path)
+
     for i in range(winreg.QueryInfoKey(reg_key)[1]):
         value_name, value_data, value_type = winreg.EnumValue(reg_key, i)
+
         if value_name == "CursorBaseSize" and value_data in [64, 48, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256]:
             return True 
 
 
 settings_window = win32gui.FindWindow(None, "Settings")
+
 #In case settings is already open, close
 if settings_window == True: #evaluates to a value other than 0
     while True:
         win32gui.PostMessage(settings_window, win32con.WM_CLOSE, 0, 0)
         print("Closing settings, re-opening...")
         time.sleep(1)
+
         settings_window = win32gui.FindWindow(None, "Settings")
+
         if settings_window == False:
             break
+
 os.startfile("ms-settings:")
 time.sleep(1)
 settings_window = win32gui.FindWindow(None, "Settings")
+
 if settings_window == False: #In case settings fails to open, try again
     while True:
         print(settings_window)
         time.sleep(1)
+
         os.startfile("ms-settings:")
         time.sleep(1)
+
         settings_window = win32gui.FindWindow(None, "Settings")
+        
         if settings_window == True:
             break
 
@@ -65,25 +75,33 @@ keyboard.SendKeys("{DOWN}")
 keyboard.SendKeys("{ENTER}")
 keyboard.SendKeys("{TAB}")
 time.sleep(0.2)
+
 keyboard.SendKeys("{RIGHT}")
 time.sleep(0.5)
+
 keyboard.SendKeys("{RIGHT}")
 check_registry()
 result = check_registry()
+
 if result != True: #Check if changes were made
     while True:
         time.sleep(0.5)
+
         keyboard.SendKeys("{RIGHT}")
         time.sleep(0.5)
+
         keyboard.SendKeys("{RIGHT}")
         check_registry()
         result = check_registry()
+
         if result == True:
             break
+
         else:
             win32gui.PostMessage(settings_window, win32con.WM_CLOSE, 0, 0)
-            file_path = r"F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\CursorSizeAdjust.py"
-            subprocess.run(["cmd", "/c", "start", "python.exe", file_path], shell = True)
+            file_path = os.path.dirname(os.path.abspath(__file__))
+            joined_file = os.path.join(file_path,'CursorSizeAdjust.py')
+            subprocess.run(["cmd", "/c", "start", "python.exe", joined_file], shell = True)
             os._exit(0)
 
 time.sleep(0.1)
