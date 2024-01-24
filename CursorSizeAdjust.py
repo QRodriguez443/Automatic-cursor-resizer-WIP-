@@ -1,4 +1,5 @@
 import time
+import subprocess
 import pywinauto.keyboard as keyboard
 import win32gui
 import win32con
@@ -42,6 +43,7 @@ if settings_window == False: #In case settings fails to open, try again
 
 # Move the settings window off-screen
 settings_window = win32gui.FindWindow(None, "Settings")
+win32gui.SetForegroundWindow(settings_window)
 win32gui.SetWindowPos(settings_window, None, -2000, -2000, 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
 
 time.sleep(0.1)
@@ -69,10 +71,20 @@ keyboard.SendKeys("{RIGHT}")
 check_registry()
 result = check_registry()
 if result != True: #Check if changes were made
-    time.sleep(0.5)
-    keyboard.SendKeys("{RIGHT}")
-    time.sleep(0.5)
-    keyboard.SendKeys("{RIGHT}")
+    while True:
+        time.sleep(0.5)
+        keyboard.SendKeys("{RIGHT}")
+        time.sleep(0.5)
+        keyboard.SendKeys("{RIGHT}")
+        check_registry()
+        result = check_registry()
+        if result == True:
+            break
+        else:
+            win32gui.PostMessage(settings_window, win32con.WM_CLOSE, 0, 0)
+            file_path = r"F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\CursorSizeAdjust.py"
+            subprocess.run(["cmd", "/c", "start", "python.exe", file_path], shell = True)
+            os._exit(0)
 
 time.sleep(0.1)
 
