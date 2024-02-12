@@ -21,9 +21,6 @@ FILE_PATH = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "Launcher_
 if __name__ == "__main__":
     class LauncherChecker:
         def __init__(self):
-            self.file = FILE_PATH
-            self.title = LAUNCHER_TITLE
-
             self.times = 0
             self.target_x = 1600
             self.target_y = 1110 # Co-ordinates for mouse pointer
@@ -37,17 +34,17 @@ if __name__ == "__main__":
 
         def update_int(self): # Gets current number in txt and increments by 1
             try:
-                integer = read(self.file[3])
-                updated_int = string_to_int(self.file[3], integer)
+                integer = read(FILE_PATH[3])
+                updated_int = string_to_int(FILE_PATH[3], integer)
                 return updated_int
 
             except FileNotFoundError as e:
                 print("Error: {e}")
-                write(self.file[3], '')
-                write(self.file[3], '0')
+                write(FILE_PATH[3], '')
+                write(FILE_PATH[3], '0')
 
-                integer = read(self.file[3])
-                updated_int = string_to_int(self.file[3], integer)
+                integer = read(FILE_PATH[3])
+                updated_int = string_to_int(FILE_PATH[3], integer)
                 return updated_int
             
         def is_window_active(self):
@@ -56,7 +53,7 @@ if __name__ == "__main__":
             while True: # Check if the target hWnd matches the currently focused hWnd
                 self.timeout.wait(0.05)
                 # Target window
-                launcher_windows = win32gui.FindWindow(None, self.title)
+                launcher_windows = win32gui.FindWindow(None, LAUNCHER_TITLE)
 
                 if launcher_windows:
                     # Currently focused window
@@ -74,7 +71,7 @@ if __name__ == "__main__":
 
             while True:
                 # Find the target window in task list
-                self.launcher_window = win32gui.FindWindow(None, self.title)
+                self.launcher_window = win32gui.FindWindow(None, LAUNCHER_TITLE)
                 print(self.launcher_window)
 
                 if self.launcher_window:
@@ -89,7 +86,7 @@ if __name__ == "__main__":
                         
                         try:
                         # Set focus to the launcher window, then retrieve the ID of the active window
-                            launcher_window = gw.getWindowsWithTitle(self.title)
+                            launcher_window = gw.getWindowsWithTitle(LAUNCHER_TITLE)
                             self.event.wait()
                             self.event.clear() # Signals that the active_window has been updated
 
@@ -109,7 +106,7 @@ if __name__ == "__main__":
                                 speed_modified = update_bool("speed_modified") # See: mouse_speed.py
 
                                 if not speed_modified: # Only open process if the mouse sensitivity is not currently modified
-                                    subprocess.Popen(["python.exe", self.file[1]], shell=True) # text_field_input_detection.py
+                                    subprocess.Popen(["python.exe", FILE_PATH[1]], shell=True) # text_field_input_detection.py
 
                                 while True:
                                     mouse_over_field = update_bool('mouse_over_field') # See: text_field_input_detection.py
@@ -125,7 +122,7 @@ if __name__ == "__main__":
                                 if not alrdy_executed: # This if block is only executed once
                                     original_mouse_position = pyautogui.position()
                                     pyautogui.moveTo(self.target_x, self.target_y, duration=0)
-                                    subprocess.Popen(["python.exe", self.file[1]], shell=True) # text_field_input_detection.py
+                                    subprocess.Popen(["python.exe", FILE_PATH[1]], shell=True) # text_field_input_detection.py
 
                                     while True:
                                         mouse_over_field = update_bool('mouse_over_field')
@@ -135,7 +132,7 @@ if __name__ == "__main__":
                                             pyautogui.moveTo(original_mouse_position)
                                             break
 
-                                    subprocess.Popen(["python.exe", self.file[2]], shell=True) # "LauncherCreds.py"
+                                    subprocess.Popen(["python.exe", FILE_PATH[2]], shell=True) # "LauncherCreds.py"
                                     v('handle', True)
                                     alrdy_executed = True
 
