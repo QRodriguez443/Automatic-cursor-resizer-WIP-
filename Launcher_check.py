@@ -3,7 +3,6 @@ import pyautogui
 import os
 import subprocess
 import threading
-import time
 import pygetwindow as gw
 from AutoMove_shared_variables import v, update_bool
 # Some functions are no longer used due to changes in code
@@ -72,6 +71,7 @@ if __name__ == "__main__":
 
             global alrdy_executed
             alrdy_executed = False
+
             while True:
                 # Find the target window in task list
                 self.launcher_window = win32gui.FindWindow(None, LAUNCHER_TITLE)
@@ -97,33 +97,32 @@ if __name__ == "__main__":
                             original_mouse_position = pyautogui.position()
                             pyautogui.moveTo(self.target_x, self.target_y, duration=0)
                             
-
                             speed_modified = update_bool("speed_modified") # See: mouse_speed.py
 
                             if not speed_modified: # Only open process if the mouse sensitivity is not currently modified
                                 subprocess.Popen(["python.exe", FILE_PATH[0]], shell=True) # text_field_input_detection.py
 
-                            while True:
+                            while True: # Keep mouse cursor within field until operation completes
                                 mouse_over_field = update_bool('mouse_over_field') # See: text_field_input_detection.py
-                                
+                                pyautogui.moveTo(self.target_x, self.target_y, duration=0)
+
                                 if mouse_over_field:
                                     pyautogui.click()
                                     pyautogui.moveTo(original_mouse_position)
                                     subprocess.Popen(["python.exe", FILE_PATH[1]], shell=True) # "LauncherCreds.py"
                                     break
 
-                        else: # When the launcher is within focus, this block is executed
-                            """
-                            When launcher first starts, execution of this program interrupts focus to launcher, so 
-                            immediately refocus with mouse. """
+                        else: # This block is executed only once if the launcher is in focus upon first run of this script.
+
                             if not alrdy_executed: # This if block is only executed once
                                 original_mouse_position = pyautogui.position()
                                 
                                 pyautogui.moveTo(self.target_x, self.target_y, duration=0)
                                 subprocess.Popen(["python.exe", FILE_PATH[0]], shell=True) # text_field_input_detection.py
 
-                                while True:
+                                while True: # Keep mouse cursor within field until operation completes
                                     mouse_over_field = update_bool('mouse_over_field')
+                                    pyautogui.moveTo(self.target_x, self.target_y, duration=0)
 
                                     if mouse_over_field:
                                         pyautogui.click()
@@ -135,14 +134,15 @@ if __name__ == "__main__":
                                 self.timeout.wait(0.3)
 
                         self.times += 1
-                        if self.times == 8:
+                        if self.times == 8: # Only allow this section to run for 8 iterations
                             os.system("taskkill /IM python.exe /F")
 
                     except gw.PyGetWindowException as e:
-                        print(f"An error occurred: {e}")
-                        print("wait for sleep:")
+                        print(f"An error occurred, most likely due to   \
+                                interruption of window's focus: {e}")
                         self.timeout.wait(1)
 
+                        # Start new instance to escape error and continue
                         subprocess.Popen(["python.exe", FILE_PATH[3]], shell=True)
 
                         error_thrown = self.update_int()
@@ -161,6 +161,7 @@ if __name__ == "__main__":
                         os.system("taskkill /IM python.exe /F") # 30000 == about 5 seconds
 
     def main(): # Start instance of class
+        v("speed_modified", False) # Reset the indicator of mouse sensitivity modification
         int_reset() # Reset number of error_thrown
         
         first_instance = LauncherChecker()
