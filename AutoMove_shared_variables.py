@@ -4,8 +4,9 @@ import os
 # The idea was to create a way of declaring variables that can be shared between separate modules using text files(there's probably a better method I'm unaware of).
 # NO NEED TO MANUALLY CREATE ANY TEXT FILES, read_variable() WILL DO IT AUTOMATICALLY
 
-def update_bool(txt_filename): # Unfortunately must be used separately from v() to read the main(main, MEANING THE MODULE IN WHICH THE VARIABLE IS FIRST DECLARED) txt from "non-main" modules
+def update_bool(txt_filename: str) -> bool: # Unfortunately must be used separately from v() to read the main(THE MODULE IN WHICH THE VARIABLE IS FIRST DECLARED) txt from separate modules
     shared_variabletxt = variable_txtfile(txt_filename)
+
     try:
         with open(shared_variabletxt, "r") as file:
             shared_variabletxt = file.read().strip()
@@ -21,13 +22,13 @@ def update_bool(txt_filename): # Unfortunately must be used separately from v() 
             shared_variabletxt = file.read().strip()
         return shared_variabletxt == 'True'
 
-def read_variable(shared_variabletxt): # Used to get the state of a variable
-    # Open and read boolean of the shared variable
+def read_variable(shared_variabletxt: str) -> bool: # Used to get the state of a variable
+    # Open and read value of the shared variable
     try:
         with open(shared_variabletxt, "r") as file:
             shared_variabletxt = file.read().strip()
             
-    except FileNotFoundError as e: # If file does not exist, create the file
+    except FileNotFoundError as e:
         #print('File not found, creating txt file')
 
         with open(shared_variabletxt, 'w') as file:
@@ -41,7 +42,7 @@ def read_variable(shared_variabletxt): # Used to get the state of a variable
     update_bool = shared_variabletxt == 'True'
     return shared_variabletxt == 'True'
 
-def set_variable(shared_variabletxt, bvalue): # Write true/false string into txt file
+def set_variable(shared_variabletxt: str, bvalue: bool) -> None: # Write true/false string into txt file
     # Modify the shared variable 
     with open(shared_variabletxt, "w") as file:
         #print('set_variable:', shared_variabletxt)
@@ -49,7 +50,7 @@ def set_variable(shared_variabletxt, bvalue): # Write true/false string into txt
         #print('writing', bvalue)
         file.write(str(bvalue)) # Translate boolean into string
 
-def variable_txtfile(txt_filename): # Get the relative path to a specified text file
+def variable_txtfile(txt_filename: str) -> str: # Get the relative path to a specified text file
     # Get this script's directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
@@ -63,7 +64,7 @@ def variable_txtfile(txt_filename): # Get the relative path to a specified text 
     # variable will be path to the text file used by "result" in declare_variable
 
 # Function should equal the value of txt file, replace parameter with txt name w/o extension
-def declare_variable(var):
+def declare_variable(var: str) -> tuple[str, bool, str]:
     global result
     result = variable_txtfile(var)
     #print('sending', result)
@@ -74,31 +75,29 @@ def declare_variable(var):
     # truefalse_result is the boolean being returned
 
 # Gets the txt file/variable: and reads the boolean, returns name of txt and the txt's path
-def name_of_file(name):
+def name_of_file(name: str) -> tuple[str, str]:
     declared_var = declare_variable(name) # Replaced with txt file name
 
     txt_path = declared_var[0]
     boo = declared_var[1]
-    #print('press =', boo)
     return txt_path, name
 
 # Return boolean from specified txt file
-def path_bool(var, boolean): # variable = True || False
+def path_bool(var: str, boolean: bool) -> bool:
     set_variable(var, boolean)
 
     declared_var = declare_variable(name)
     boo = declared_var[1]
-    #print('press =', boo)
     return boo
 
 # For better readability, executing the function looks similar to declaring a variable
 # Ex: variable = v(variable, False)
-def v(var, boolean): # Reads and modifies the txt file at the same time, returning the string as a boolean.
+def v(var: str, boolean: bool) -> bool: # Reads and modifies the txt file at the same time.
     global name
     txt_path, name = name_of_file(var)
 
     var = path_bool(txt_path, boolean)
     new_variable = var
-    return new_variable # Boolean
+    return new_variable
     
     
