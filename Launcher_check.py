@@ -32,7 +32,7 @@ if __name__ == "__main__":
             self.launcher_window = None
 
 
-        def update_int(self): # Gets current number in txt and increments by 1
+        def update_int(self) -> int: # Gets current number in txt and increments by 1
             try:
                 integer = read(FILE_PATH[2])
                 updated_int = string_to_int(FILE_PATH[2], integer)
