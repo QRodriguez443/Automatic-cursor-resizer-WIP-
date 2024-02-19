@@ -155,4 +155,4 @@ if __name__ == "__main__":
         subprocess_thread.join()#2.
         main_logic_restart_thread.join()#3.
     
-        main()
+    main()
