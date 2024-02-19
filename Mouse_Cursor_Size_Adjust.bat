@@ -1,4 +1,5 @@
-title Mouse_Cursor_Size_Adjust REM So Enterinput/END files can interact with CLI
+REM So Enterinput/END files can interact with CLI
+title Mouse_Cursor_Size_Adjust
 @echo off
 
 set targetProcess=swtor.exe
