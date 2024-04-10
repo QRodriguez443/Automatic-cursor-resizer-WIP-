@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <iostream>
 
+void GetSettingsChild(HWND returnedHwnd);
+
 HWND GetSettingsHandle() // Executes and retrieves Settings window handle
 {
 	Sleep(500); // Hopefully solves error with settingsHwnd retrieving non-existent handle
@@ -10,6 +12,7 @@ HWND GetSettingsHandle() // Executes and retrieves Settings window handle
 	if (settingsHwnd != NULL)
 	{
 		std::cout << "Window already open, Settings handle retrieved:"<< settingsHwnd << std::endl;
+		GetSettingsChild(settingsHwnd);
 		return settingsHwnd;
 	}
 	else
@@ -27,22 +30,26 @@ HWND GetSettingsHandle() // Executes and retrieves Settings window handle
 			}
 			if (i == 5)
 			{
-				try {
+				try 
+				{
 					throw std::runtime_error("Too many errors occurred");
 				}
-				catch (const std::runtime_error& e) {
+				catch (const std::runtime_error& e) 
+				{
 					// Handle the exception
-					std::cerr << "Caught a runtime error: " << e.what() << '\n';
+					std::cerr << e.what() << '\n';
 				}
 			}
 			else if (errorThrown && settingsHwnd)
 			{
 				std::cout << "Error resolved!" << " Settings handle retrieved" << std::endl;
+				GetSettingsChild(settingsHwnd);
 				return settingsHwnd;
 			}
 			else if (settingsHwnd)
 			{
 				std::cout << "Settings handle retrieved" << std::endl;
+				GetSettingsChild(settingsHwnd);
 				return settingsHwnd;
 			}
 		}
@@ -51,5 +58,21 @@ HWND GetSettingsHandle() // Executes and retrieves Settings window handle
 
 void GetSettingsChild(HWND returnedHwnd) // Call this function within the one above
 {
-	FindWindowExW(returnedHwnd, NULL, L"Windows.UI.Core.CoreWindow", L"Settings");
+	// Get the child of top-level Settings window
+	HWND settingsChild = FindWindowExW(returnedHwnd, NULL, L"Windows.UI.Core.CoreWindow", L"Settings");
+	if (settingsChild != NULL)
+	{
+		std::wcout << "Child of Settings window: " << settingsChild << std::endl;
+	}
+	else
+	{
+		try
+		{
+			throw std::runtime_error("Could not find Settings window's child");
+		}
+		catch (const std::runtime_error& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+	}
 }
