@@ -4,6 +4,6 @@
 
 #include <windows.h>
 
-HWND getSettingsHandle();
+HWND GetSettingsHandle();
 
 #endif

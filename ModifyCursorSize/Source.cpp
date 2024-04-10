@@ -12,6 +12,6 @@ int main()
 	size slider */
 
 	// Get Setting's top window element
-	HWND settingsHwnd = getSettingsHandle();
+	HWND settingsHwnd = GetSettingsHandle();
 
 }

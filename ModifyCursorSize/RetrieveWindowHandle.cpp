@@ -1,13 +1,15 @@
 #include <windows.h>
 #include <iostream>
 
-HWND getSettingsHandle() // Executes and retrieves Settings window handle
+HWND GetSettingsHandle() // Executes and retrieves Settings window handle
 {
+	Sleep(500); // Hopefully solves error with settingsHwnd retrieving non-existent handle
+
 	//Check if Settings is already running
 	HWND settingsHwnd = FindWindowW(L"ApplicationFrameWindow", L"Settings");
 	if (settingsHwnd != NULL)
 	{
-		std::cout << "Window already open, Settings handle retrieved" << std::endl;
+		std::cout << "Window already open, Settings handle retrieved:"<< settingsHwnd << std::endl;
 		return settingsHwnd;
 	}
 	else
@@ -45,4 +47,9 @@ HWND getSettingsHandle() // Executes and retrieves Settings window handle
 			}
 		}
 	}
+}
+
+void GetSettingsChild(HWND returnedHwnd) // Call this function within the one above
+{
+	FindWindowExW(returnedHwnd, NULL, L"Windows.UI.Core.CoreWindow", L"Settings");
 }
