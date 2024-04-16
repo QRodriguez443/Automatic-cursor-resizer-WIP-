@@ -3,13 +3,14 @@
 
 HWND GetSettingsChild(HWND returnedHwnd);
 
-HWND GetSettingsHandle() // Executes and retrieves Settings window handle, returns its child.
+// Executes and retrieves Settings window handle, returns its child.
+HWND GetSettingsHandle()
 {
 	Sleep(500); // Hopefully solves error with settingsHwnd retrieving non-existent handle
 
 	//Check if Settings is already running
 	HWND settingsHwnd = FindWindowW(L"ApplicationFrameWindow", L"Settings");
-	if (settingsHwnd != NULL)
+	if (settingsHwnd)
 	{
 		std::cout << "Window already open, Settings handle retrieved:"<< settingsHwnd << std::endl;
 		HWND settingsChild = GetSettingsChild(settingsHwnd);
@@ -20,10 +21,12 @@ HWND GetSettingsHandle() // Executes and retrieves Settings window handle, retur
 		bool errorThrown = false;
 		for (int i = 0; i <= 5; i++) // Limit thrown errors
 		{
-			ShellExecuteW(NULL, L"Open", L"ms-settings:", NULL, NULL, SW_NORMAL);
+			ShellExecuteW(nullptr, L"Open", L"ms-settings:", nullptr, nullptr, SW_NORMAL);
+
+			Sleep(500); // Ensure process is fully initialized
 
 			HWND settingsHwnd = FindWindowW(L"ApplicationFrameWindow", L"Settings");
-			if (settingsHwnd == NULL)
+			if (!settingsHwnd)
 			{
 				std::cerr << "Error: Window not found, attempting to resolve..." << std::endl;
 				errorThrown = true;
@@ -58,22 +61,35 @@ HWND GetSettingsHandle() // Executes and retrieves Settings window handle, retur
 
 HWND GetSettingsChild(HWND returnedHwnd) // Call this function within the one above
 {
-	// Get the child of top-level Settings window
-	HWND settingsChild = FindWindowExW(returnedHwnd, NULL, L"Windows.UI.Core.CoreWindow", L"Settings");
-	if (settingsChild != NULL)
+	bool errorThrown = false;
+	for (int i = 0; i <= 5; i++) // Limit thrown errors
 	{
-		std::wcout << "Child of Settings window: " << settingsChild << std::endl;
-		return settingsChild;
-	}
-	else
-	{
-		try
+		// Get the child of top-level Settings window
+		HWND settingsChild = FindWindowExW(returnedHwnd, nullptr, L"Windows.UI.Core.CoreWindow", L"Settings");
+		if (settingsChild)
 		{
-			throw std::runtime_error("Could not find Settings window's child");
+			if (errorThrown)
+			{
+				std::wcout << "Error resolved..." << std::endl;
+			}
+			std::wcout << "Child of Settings window: " << settingsChild << std::endl;
+			return settingsChild;
 		}
-		catch (const std::runtime_error& e)
+		else if (i == 5)
 		{
-			std::cerr << e.what() << '\n';
+			throw std::runtime_error("Too many errors occurred");
+		}
+		else
+		{
+			try
+			{
+				throw std::runtime_error("Could not find Settings window's child");
+			}
+			catch (const std::runtime_error& e)
+			{
+				errorThrown = true;
+				std::cerr << e.what() << '\n';
+			}
 		}
 	}
 }
