@@ -4,6 +4,12 @@
 
 #include <UIAutomation.h>
 
+struct AInitElements
+{
+	IUIAutomationElement* settingsElement;
+	IUIAutomation* root;
+};
+
 void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomation* root);
 
 #endif
