@@ -1,16 +1,20 @@
 #include <windows.h>
+#include <UIAutomation.h>
 #include <iostream>
 
 HWND GetSettingsChild(HWND returnedHwnd);
+int PrimeInit(HWND settingsHwnd);
 
 // Executes and retrieves Settings window handle, returns its child.
 HWND GetSettingsHandle()
 {
-	Sleep(500); // Hopefully solves error with settingsHwnd retrieving non-existent handle
-
 	//Check if Settings is already running
 	HWND settingsHwnd = FindWindowW(L"ApplicationFrameWindow", L"Settings");
-	if (settingsHwnd)
+
+	/* Searching for handle is prone to a bug (retrieving non-existant handle), so check that
+	   the element exists. */
+	int settingsExists = PrimeInit(settingsHwnd);
+	if (settingsHwnd && settingsExists)
 	{
 		std::cout << "Window already open, Settings handle retrieved:"<< settingsHwnd << std::endl;
 		HWND settingsChild = GetSettingsChild(settingsHwnd);
@@ -92,4 +96,35 @@ HWND GetSettingsChild(HWND returnedHwnd) // Call this function within the one ab
 			}
 		}
 	}
+}
+
+// Init UIAutomation and get settings' top window element from handle
+int PrimeInit(HWND settingsHwnd)
+{
+	IUIAutomation* root = nullptr;
+	CoInitialize(nullptr);
+	HRESULT result = CoCreateInstance(__uuidof(CUIAutomation), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IUIAutomation), (void**)&root);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Error: Init failed");
+	}
+
+	IUIAutomationElement* settingsTopElement;
+	root->ElementFromHandle(settingsHwnd, &settingsTopElement);
+	if (settingsTopElement)
+	{
+		std::wcout << "Top Settings element exists: " << settingsTopElement << std::endl;
+
+		// Memory release
+		settingsTopElement->Release();
+		root->Release();
+		CoUninitialize();
+
+		return 0;
+	}
+	// Memory release
+	root->Release();
+	CoUninitialize();
+
+	return 1;
 }
