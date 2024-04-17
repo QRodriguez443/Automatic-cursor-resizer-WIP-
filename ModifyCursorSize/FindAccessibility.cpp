@@ -1,8 +1,8 @@
+#include "AccessibilityElements.h"
 #include <iostream>
 #include <UIAutomation.h>
 
-IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* root);
-
+// Find the accessibility element and access its page
 void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomation* root)
 {
 	// Define property's name
@@ -19,43 +19,42 @@ void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomatio
 	settingsElement->FindAll(TreeScope_Children, condition, &pane);
 	if (!pane)
 	{
+		SysFreeString(pValue.bstrVal);
 		throw std::runtime_error("Error finding pane");
 	}
-	// Get the first element in the array.
-	IUIAutomationElement* paneElement;
-	pane->GetElement(0, &paneElement);
+	SysFreeString(pValue.bstrVal);
 
-	// Get the name of the element.
-	VARIANT name;
-	paneElement->GetCurrentPropertyValue(UIA_ClassNamePropertyId, &name);
-	std::wcout << "Child of settings element: " << name.bstrVal << std::endl;
+	// Get pane element
+	IUIAutomationElement* paneElement = GetPaneElement(pane);
 
 	// Get pane's child: list
 	IUIAutomationElement* listElement = GetList(paneElement, root);
+
+	// Get Accessibility element
+	IUIAutomationElement* AccessibilityElement = GetAccessibility(listElement, root);
+
+	// Access the Accessibility page
+	GotoAccessibility(AccessibilityElement);
+
+	// Memory release
+	AccessibilityElement->Release();
+	listElement->Release();
+	paneElement->Release();
+	pane->Release();
+	settingsElement->Release();
+	condition->Release();
+	CoUninitialize();
 }
 
-IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* root)
+void GotoAccessibility(IUIAutomationElement* AccessibilityElement)
 {
-	// Define property's name
-	VARIANT pAID;
-	pAID.vt = VT_BSTR;
-	pAID.bstrVal = SysAllocString(L"PageGroupsListView");
-
-	// Create condition
-	IUIAutomationCondition* condition = nullptr;
-	root->CreatePropertyCondition(UIA_AutomationIdPropertyId, pAID, &condition);
-
-	IUIAutomationElementArray* list;
-	paneElement->FindAll(TreeScope_Children, condition, &list);
-	if (!list)
+	IUIAutomationInvokePattern* access = nullptr;
+	AccessibilityElement->GetCurrentPattern(UIA_InvokePatternId, (IUnknown**)&access);
+	if (!access)
 	{
-		SysFreeString(pAID.bstrVal);
-		throw std::runtime_error("Error finding list");
+		throw std::runtime_error("Error getting access");
 	}
-	SysFreeString(pAID.bstrVal);
+	access->Invoke();
 
-	IUIAutomationElement* listElement;
-	list->GetElement(0, &listElement);
-	
-	return listElement;
+	access->Release();
 }
