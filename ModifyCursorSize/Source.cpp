@@ -3,12 +3,6 @@
 #include <UIAutomation.h>
 #include <iostream>
 
-struct AInitElements
-{
-	IUIAutomationElement* settingsElement;
-	IUIAutomation* root;
-};
-
 // Initialize UIAutomation and retrieve settings element
 AInitElements InitUIA(HWND settingsHwnd)
 {
@@ -64,6 +58,5 @@ int main()
 	
 	// Find Accessibility list item: 
 	FindAccessibilityButton(AIE.settingsElement, AIE.root);
-	// 3. Accessibility: AID: SettingsPageGroupEaseOfAccess
 
 }
