@@ -41,9 +41,8 @@ void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomatio
 	listElement->Release();
 	paneElement->Release();
 	pane->Release();
-	settingsElement->Release();
 	condition->Release();
-	CoUninitialize();
+	// settingsElement and root will be re-used
 }
 
 void GotoAccessibility(IUIAutomationElement* AccessibilityElement)
