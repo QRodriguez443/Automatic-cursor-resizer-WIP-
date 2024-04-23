@@ -1,3 +1,4 @@
+#include "CreateCondition.h"
 #include <UIAutomation.h>
 #include <iostream>
 
@@ -19,24 +20,15 @@ IUIAutomationElement* GetPaneElement(IUIAutomationElementArray* pane)
 
 IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* root)
 {
-	// Define property's name
-	VARIANT pValue;
-	pValue.vt = VT_BSTR;
-	pValue.bstrVal = SysAllocString(L"PageGroupsListView");
-
-	// Create condition
-	IUIAutomationCondition* condition = nullptr;
-	root->CreatePropertyCondition(UIA_AutomationIdPropertyId, pValue, &condition);
+	IUIAutomationCondition* condition = CreateCondition(root, L"PageGroupsListView", UIA_AutomationIdPropertyId);
 
 	// Get list element
 	IUIAutomationElementArray* list;
 	paneElement->FindAll(TreeScope_Children, condition, &list);
 	if (!list)
 	{
-		SysFreeString(pValue.bstrVal);
 		throw std::runtime_error("Error finding list");
 	}
-	SysFreeString(pValue.bstrVal);
 
 	IUIAutomationElement* listElement;
 	list->GetElement(0, &listElement);
@@ -49,24 +41,15 @@ IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* 
 
 IUIAutomationElement* GetAccessibility(IUIAutomationElement* listElement, IUIAutomation* root)
 {
-	// Define property's name
-	VARIANT pValue;
-	pValue.vt = VT_BSTR;
-	pValue.bstrVal = SysAllocString(L"SettingsPageGroupEaseOfAccess");
-
-	// Create condition
-	IUIAutomationCondition* condition;
-	root->CreatePropertyCondition(UIA_AutomationIdPropertyId, pValue, &condition);
+	IUIAutomationCondition* condition = CreateCondition(root, L"SettingsPageGroupEaseOfAccess", UIA_AutomationIdPropertyId);
 
 	// Get accessibility element
 	IUIAutomationElement* AccessibilityElement;
 	listElement->FindFirst(TreeScope_Children, condition, &AccessibilityElement);
 	if (!AccessibilityElement)
 	{
-		SysFreeString(pValue.bstrVal);
 		throw std::runtime_error("Error finding Accessibility");
 	}
-	SysFreeString(pValue.bstrVal);
 
 	// Memory release
 	condition->Release();
