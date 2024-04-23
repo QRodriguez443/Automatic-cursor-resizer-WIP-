@@ -1,39 +1,27 @@
 #include "AccessibilityElements.h"
+#include "CreateCondition.h"
 #include <iostream>
 #include <UIAutomation.h>
 
 // Find the accessibility element and access its page
 void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomation* root)
 {
-	// Define property's name
-	VARIANT pValue;
-	pValue.vt = VT_BSTR;
-	pValue.bstrVal = SysAllocString(L"ScrollViewer");
-
-	// Create condition
-	IUIAutomationCondition* condition = nullptr;
-	root->CreatePropertyCondition(UIA_ClassNamePropertyId, pValue, &condition);
+	IUIAutomationCondition* condition = CreateCondition(root, L"ScrollViewer", UIA_ClassNamePropertyId);
 
 	// Get child of settingsElement: pane
 	IUIAutomationElementArray* pane;
 	settingsElement->FindAll(TreeScope_Children, condition, &pane);
 	if (!pane)
 	{
-		SysFreeString(pValue.bstrVal);
 		throw std::runtime_error("Error finding pane");
 	}
-	SysFreeString(pValue.bstrVal);
 
-	// Get pane element
 	IUIAutomationElement* paneElement = GetPaneElement(pane);
 
-	// Get pane's child: list
 	IUIAutomationElement* listElement = GetList(paneElement, root);
 
-	// Get Accessibility element
 	IUIAutomationElement* AccessibilityElement = GetAccessibility(listElement, root);
 
-	// Access the Accessibility page
 	GotoAccessibility(AccessibilityElement);
 
 	// Memory release
@@ -53,7 +41,7 @@ void GotoAccessibility(IUIAutomationElement* AccessibilityElement)
 	{
 		throw std::runtime_error("Error getting access");
 	}
-	access->Invoke();
+	access->Invoke(); // Press the button
 
 	access->Release();
 }
