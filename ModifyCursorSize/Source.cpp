@@ -1,5 +1,6 @@
 #include "RetrieveWindowHandle.h"
 #include "FindAccessibility.h"
+#include "FindMousePointer.h"
 #include <UIAutomation.h>
 #include <iostream>
 
@@ -58,5 +59,9 @@ int main()
 	
 	// Find Accessibility list item: 
 	FindAccessibilityButton(AIE.settingsElement, AIE.root);
+
+	// After bottom level settings element, 1. list: CName: ListView, 
+	FindMousePointer(AIE.settingsElement, AIE.root);
+	// 2. Vision: ControlType: group, 3. Mouse pointer: ControlType: list item, 4. Invoke Mp
 
 }
