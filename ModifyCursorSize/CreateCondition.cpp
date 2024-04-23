@@ -6,7 +6,7 @@ IUIAutomationCondition* CreateCondition(IUIAutomation* root, const wchar_t* wide
 {
 	VARIANT var;
 	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(wideStr);
+	var.bstrVal = SysAllocString(wideStr); // Defines property's name/value
 
 	IUIAutomationCondition* condition;
 	root->CreatePropertyCondition(UIA_Prop, var, &condition);
