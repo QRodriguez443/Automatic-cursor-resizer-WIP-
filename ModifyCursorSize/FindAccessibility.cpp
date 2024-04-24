@@ -1,5 +1,6 @@
 #include "AccessibilityElements.h"
 #include "CreateCondition.h"
+#include "RestartSettingsWindow.h"
 #include <iostream>
 #include <UIAutomation.h>
 
@@ -9,14 +10,25 @@ void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomatio
 	IUIAutomationCondition* condition = CreateCondition(root, L"ScrollViewer", UIA_ClassNamePropertyId);
 
 	// Get child of settingsElement: pane
-	IUIAutomationElementArray* pane;
-	settingsElement->FindAll(TreeScope_Children, condition, &pane);
-	if (!pane)
+	IUIAutomationElement* paneElement = nullptr;
+	while (!paneElement)
 	{
-		throw std::runtime_error("Error finding pane");
-	}
+		settingsElement->FindFirst(TreeScope_Children, condition, &paneElement);
+		if (!paneElement)
+		{
+			std::cerr << "Error finding pane" << '\n';
+			// Memory Release
+			condition->Release();
+			settingsElement->Release();
+			root->Release();
+			CoUninitialize();
 
-	IUIAutomationElement* paneElement = GetPaneElement(pane);
+			RestartSettingsWindow();
+			system("start ./x64/Debug/ModifyCursorSize.exe");
+			Sleep(10);
+			exit(1);
+		}
+	}
 
 	IUIAutomationElement* listElement = GetList(paneElement, root);
 
@@ -28,7 +40,6 @@ void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomatio
 	AccessibilityElement->Release();
 	listElement->Release();
 	paneElement->Release();
-	pane->Release();
 	condition->Release();
 	// settingsElement and root will be re-used
 }
