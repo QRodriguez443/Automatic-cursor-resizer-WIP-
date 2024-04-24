@@ -5,7 +5,6 @@
 #include <UIAutomation.h>
 
 void GotoAccessibility(IUIAutomationElement* AccessibilityElement);
-IUIAutomationElement* GetPaneElement(IUIAutomationElementArray* pane);
 IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* root);
 IUIAutomationElement* GetAccessibility(IUIAutomationElement* listElement, IUIAutomation* root);
 
