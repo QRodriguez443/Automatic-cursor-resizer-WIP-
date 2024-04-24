@@ -13,8 +13,11 @@ IUIAutomationCondition* CreateCondition(IUIAutomation* root, const wchar_t* wide
 	if (!condition)
 	{
 		SysFreeString(var.bstrVal);
-		throw std::runtime_error("Error creating condition");
+		std::cerr << "Error creating condition" << '\n';
 	}
-	SysFreeString(var.bstrVal);
-	return condition;
+	else
+	{
+		SysFreeString(var.bstrVal);
+		return condition;
+	}
 }
