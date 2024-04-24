@@ -4,6 +4,26 @@
 #include <UIAutomation.h>
 #include <iostream>
 
+AInitElements InitUIA(HWND settingsHwnd);
+
+int main()
+{
+	/* Open the settings window, navigate to accessibility, Mouse pointer, and focus into pointer
+	size slider */
+
+	// Get Setting's bottom window element
+	HWND settingsHwnd = GetSettingsHandle();
+	AInitElements AIE = InitUIA(settingsHwnd);
+	
+	// Find Accessibility list item: 
+	FindAccessibilityButton(AIE.settingsElement, AIE.root);
+
+	FindMousePointer(AIE.settingsElement, AIE.root);
+
+	// 1. 
+
+}
+
 // Initialize UIAutomation and retrieve settings element
 AInitElements InitUIA(HWND settingsHwnd)
 {
@@ -46,22 +66,4 @@ AInitElements InitUIA(HWND settingsHwnd)
 	AIE.root = root;
 
 	return AIE;
-}
-
-int main() 
-{
-	/* Open the settings window, navigate to accessibility, Mouse pointer, and focus into pointer
-	size slider */
-
-	// Get Setting's bottom window element
-	HWND settingsHwnd = GetSettingsHandle();
-	AInitElements AIE = InitUIA(settingsHwnd);
-	
-	// Find Accessibility list item: 
-	FindAccessibilityButton(AIE.settingsElement, AIE.root);
-
-	// After bottom level settings element, 1. list: CName: ListView, 
-	FindMousePointer(AIE.settingsElement, AIE.root);
-	// 2. Vision: ControlType: group, 3. Mouse pointer: ControlType: list item, 4. Invoke Mp
-
 }
