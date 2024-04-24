@@ -1,34 +1,41 @@
 #include <iostream>
 #include <UIAutomation.h>
 #include "CreateCondition.h"
+#include "MousePointerElements.h"
 
 void FindMousePointer(IUIAutomationElement* settingsElement, IUIAutomation* root)
 {
-	// Define the class name to search for
-	IUIAutomationCondition* condition = CreateCondition(root, L"ListView", UIA_ClassNamePropertyId);
+	IUIAutomationCondition* condition = CreateCondition(root, L"list", UIA_LocalizedControlTypePropertyId);
 
 	// Search children in settings element for the element with specified class name
-	IUIAutomationElement* listItem;
-	settingsElement->FindFirst(TreeScope_Children, condition, &listItem);
-	if (!listItem)
+	IUIAutomationElement* listItem = nullptr;
+	while (!listItem)
 	{
-		condition->Release();
-		throw std::runtime_error("Error finding list element");
+		settingsElement->FindFirst(TreeScope_Children, condition, &listItem);
+		if (!listItem)
+		{
+			std::cerr << "Error finding list element..." << '\n';
+		}
 	}
 	condition->Release();
 
 	IUIAutomationElement* visionElement = GetVisionElement(listItem, root);
+
+	IUIAutomationElement* mousePointerElement = GetMousePointerElement(visionElement, root);
+
+	GotoMousePointer(mousePointerElement, root);
+
+	// Memory Release
+	mousePointerElement->Release();
+	visionElement->Release();
+	listItem->Release();
 }
 
-IUIAutomationElement* GetVisionElement(IUIAutomationElement* listItem, IUIAutomation* root)
+void GotoMousePointer(IUIAutomationElement* mousePointerElement, IUIAutomation* root)
 {
-	IUIAutomationCondition* condition = CreateCondition(root, L"Vision", UIA_NamePropertyId);
+	IUIAutomationInvokePattern* pattern = nullptr;
+	mousePointerElement->GetCurrentPattern(UIA_InvokePatternId, (IUnknown**)&pattern);
+	pattern->Invoke();
 
-	IUIAutomationElement* visionElement;
-	listItem->FindFirst(TreeScope_Children, condition, &visionElement);
-	if (!visionElement)
-	{
-		throw std::runtime_error("Error getting Vision element")
-	}
-	return visionElement;
+	pattern->Release();
 }
