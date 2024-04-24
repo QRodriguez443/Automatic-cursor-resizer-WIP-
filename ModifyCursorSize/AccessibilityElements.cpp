@@ -1,37 +1,32 @@
 #include "CreateCondition.h"
+#include "RestartSettingsWindow.h"
 #include <UIAutomation.h>
 #include <iostream>
 
-IUIAutomationElement* GetPaneElement(IUIAutomationElementArray* pane)
-{
-	// Get the first element in the array.
-	IUIAutomationElement* paneElement;
-	pane->GetElement(0, &paneElement);
-
-	// Get the name of the element.
-	VARIANT name;
-	paneElement->GetCurrentPropertyValue(UIA_ClassNamePropertyId, &name);
-	std::wcout << "Child of settings element: " << name.bstrVal << std::endl;
-
-	SysReleaseString(name.bstrVal);
-
-	return paneElement;
-}
+void StartNewInstance();
 
 IUIAutomationElement* GetList(IUIAutomationElement* paneElement, IUIAutomation* root)
 {
 	IUIAutomationCondition* condition = CreateCondition(root, L"PageGroupsListView", UIA_AutomationIdPropertyId);
 
 	// Get list element
-	IUIAutomationElementArray* list;
-	paneElement->FindAll(TreeScope_Children, condition, &list);
-	if (!list)
+	IUIAutomationElement* listElement = nullptr;
+	while (!listElement)
 	{
-		throw std::runtime_error("Error finding list");
-	}
+		paneElement->FindFirst(TreeScope_Children, condition, &listElement);
+		if (!listElement)
+		{
+			std::cerr << "Error finding list" << '\n';
+			// Memory Release
+			condition->Release();
+			paneElement->Release();
+			root->Release();
+			CoUninitialize();
 
-	IUIAutomationElement* listElement;
-	list->GetElement(0, &listElement);
+			RestartSettingsWindow();
+			StartNewInstance();
+		}
+	}
 
 	// Memory release
 	condition->Release();
@@ -44,15 +39,33 @@ IUIAutomationElement* GetAccessibility(IUIAutomationElement* listElement, IUIAut
 	IUIAutomationCondition* condition = CreateCondition(root, L"SettingsPageGroupEaseOfAccess", UIA_AutomationIdPropertyId);
 
 	// Get accessibility element
-	IUIAutomationElement* AccessibilityElement;
-	listElement->FindFirst(TreeScope_Children, condition, &AccessibilityElement);
-	if (!AccessibilityElement)
+	IUIAutomationElement* AccessibilityElement = nullptr;
+	while (!AccessibilityElement)
 	{
-		throw std::runtime_error("Error finding Accessibility");
+		listElement->FindFirst(TreeScope_Children, condition, &AccessibilityElement);
+		if (!AccessibilityElement)
+		{
+			std::cerr << "Error finding Accessibility" << '\n';
+			// Memory Release
+			condition->Release();
+			listElement->Release();
+			root->Release();
+			CoUninitialize();
+
+			RestartSettingsWindow();
+			StartNewInstance();
+		}
 	}
 
 	// Memory release
 	condition->Release();
 
 	return AccessibilityElement;
+}
+
+void StartNewInstance()
+{
+	system("start ./x64/Debug/ModifyCursorSize.exe");
+	Sleep(10);
+	exit(1);
 }
