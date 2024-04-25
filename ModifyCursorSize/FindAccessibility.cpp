@@ -4,6 +4,8 @@
 #include <iostream>
 #include <UIAutomation.h>
 
+void GotoAccessibility(IUIAutomationElement* AccessibilityElement);
+
 // Find the accessibility element and access its page
 void FindAccessibilityButton(IUIAutomationElement* settingsElement, IUIAutomation* root)
 {
