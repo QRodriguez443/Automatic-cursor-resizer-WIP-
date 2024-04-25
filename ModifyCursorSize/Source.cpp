@@ -1,6 +1,7 @@
 #include "RetrieveWindowHandle.h"
 #include "FindAccessibility.h"
 #include "FindMousePointer.h"
+#include "FindChangePointerSize.h"
 #include <UIAutomation.h>
 #include <iostream>
 
@@ -15,12 +16,12 @@ int main()
 	HWND settingsHwnd = GetSettingsHandle();
 	AInitElements AIE = InitUIA(settingsHwnd);
 	
-	// Find Accessibility list item: 
+	// 1.
 	FindAccessibilityButton(AIE.settingsElement, AIE.root);
-
+	// 2.
 	FindMousePointer(AIE.settingsElement, AIE.root);
-
-	// 1. 
+	// 3.
+	FindChangePointerSize(AIE.settingsElement, AIE.root);
 
 }
 
