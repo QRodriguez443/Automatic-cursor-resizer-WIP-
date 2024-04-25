@@ -3,6 +3,8 @@
 #include "CreateCondition.h"
 #include "MousePointerElements.h"
 
+void GotoMousePointer(IUIAutomationElement* mousePointerElement, IUIAutomation* root);
+
 void FindMousePointer(IUIAutomationElement* settingsElement, IUIAutomation* root)
 {
 	IUIAutomationCondition* condition = CreateCondition(root, L"list", UIA_LocalizedControlTypePropertyId);
