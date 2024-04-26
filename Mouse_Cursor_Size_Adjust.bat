@@ -1,4 +1,3 @@
-REM So Enterinput/END files can interact with CLI
 title Mouse_Cursor_Size_Adjust
 @echo off
 
@@ -47,9 +46,9 @@ REM Detect if the program has started
             goto :CreateCursor
     
         ) else (
-            REM Open separate program that detects when targetProcess is found
+            REM Open separate program that detects when targetProcess is found, input will be set by EnterInput
             start /b EnterInput.py
-            set /p input=Waiting for program to start...
+            set /p input=Waiting for program to start... 
             timeout /t 2 /nobreak
             goto :loop
         )

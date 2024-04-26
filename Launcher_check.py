@@ -135,7 +135,8 @@ if __name__ == "__main__":
 
                         self.times += 1
                         if self.times == 8: # Only allow this section to run for 8 iterations
-                            os.system("taskkill /IM python.exe /F")
+                            v('exit_code', True)
+                            os._exit(0)
 
                     except gw.PyGetWindowException as e:
                         print(f"An error occurred, most likely due to   \
@@ -150,17 +151,19 @@ if __name__ == "__main__":
                         if error_thrown >= 10: # Set amount of errors to be allowed
                             print('Max errors reached, exiting...')
                             int_reset() # Reset error_thrown to 0
-
-                            os.system("taskkill /IM python.exe /F") # Force kill all instances
+                            v('exit_code', True)
+                            os._exit(0) # Force kill all instances
             
                 else:
                     print("Launcher not running...")
                     self.times += 1
 
                     if self.times == 30000: # if Launcher not found after 30000 iterations, close program
-                        os.system("taskkill /IM python.exe /F") # 30000 == about 5 seconds
+                        v('exit_code', True)
+                        os._exit(0) # 30000 == about 5 seconds
 
     def main(): # Start instance of class
+        v('exit_code', False)
         v("speed_modified", False) # Reset the indicator of mouse sensitivity modification
         int_reset() # Reset number of error_thrown
         

@@ -20,7 +20,7 @@ if batch_window == False:
 
 user_input_field = batch_window['Text Area']
 
-targetProcess = "swtor.exe" # Application executable
+targetProcess = "swtor.exe"
 
 # Check if the target process is NOT present in the output/task list
 while True:

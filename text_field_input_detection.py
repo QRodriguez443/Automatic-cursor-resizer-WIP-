@@ -2,8 +2,9 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import QPainter, QColor
 import pyautogui
-from AutoMove_shared_variables import v
+from AutoMove_shared_variables import v, update_bool
 from mouse_speed import main
+import os
 
 v('mouse_over_field', False) # init the "variable"
 
@@ -72,6 +73,9 @@ if __name__ == '__main__':
         else:
             print("Mouse is not over the selection field.")
             v('mouse_over_field', False)
+            exit_code = update_bool('exit_code')
+            if exit_code:
+                os._exit(0)
         
         app.processEvents()
         
