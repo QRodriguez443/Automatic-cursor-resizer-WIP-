@@ -65,9 +65,9 @@ void ChangePointerSize(IUIAutomationElement* sizeElement)
 			{
 				while (currentSize == 32)
 				{
-					Sleep(500);
+					
 					pValuePattern->SetValue(4.0);
-					Sleep(500);
+					
 					currentSize = cursorSize.load();
 					if (currentSize != -1) {
 						std::cout << "Current cursor size: " << currentSize << std::endl;
@@ -78,9 +78,9 @@ void ChangePointerSize(IUIAutomationElement* sizeElement)
 			{
 				while (currentSize != 32)
 				{
-					Sleep(500);
+					
 					pValuePattern->SetValue(1.0);
-					Sleep(500);
+					
 					currentSize = cursorSize.load();
 					if (currentSize != -1) {
 						std::cout << "Current cursor size: " << currentSize << std::endl;
@@ -92,9 +92,9 @@ void ChangePointerSize(IUIAutomationElement* sizeElement)
 					if (looped && !valueReset)
 					{
 						pValuePattern->SetValue(2.0);
-						Sleep(500);
+						
 						pValuePattern->SetValue(1.0);
-						Sleep(500);
+						
 						currentSize = cursorSize.load();
 						if (currentSize != -1) {
 							std::cout << "Current cursor size: " << currentSize << std::endl;
