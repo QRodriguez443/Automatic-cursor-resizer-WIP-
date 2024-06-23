@@ -7,7 +7,7 @@
 
 AInitElements InitUIA(HWND settingsHwnd);
 
-int main()
+void main()
 {
 	/* Open the settings window, navigate to accessibility, Mouse pointer, and focus into pointer
 	size slider */
@@ -22,7 +22,8 @@ int main()
 	FindMousePointer(AIE.settingsElement, AIE.root);
 	// 3.
 	FindChangePointerSize(AIE.settingsElement, AIE.root);
-
+	Sleep(500);
+	SendMessageW(settingsHwnd, WM_CLOSE, NULL, NULL);
 }
 
 // Initialize UIAutomation and retrieve settings element

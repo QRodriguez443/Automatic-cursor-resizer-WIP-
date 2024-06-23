@@ -21,12 +21,16 @@ IUIAutomationElement* GetMousePointerElement(IUIAutomationElement* visionElement
 {
 	IUIAutomationCondition* condition = CreateCondition(root, L"Mouse pointer", UIA_NamePropertyId);
 
-	IUIAutomationElement* mousePointerElement;
-	visionElement->FindFirst(TreeScope_Children, condition, &mousePointerElement);
-	if (!mousePointerElement)
+	int loops = 0;
+	IUIAutomationElement* mousePointerElement = nullptr;
+	while (!mousePointerElement)
 	{
-		condition->Release();
-		throw std::runtime_error("Error getting Mouse pointer element");
+		loops += 1;
+		visionElement->FindFirst(TreeScope_Children, condition, &mousePointerElement);
+		if (loops > 18)
+		{
+			throw std::runtime_error("Error getting Pointer element");
+		}
 	}
 	condition->Release();
 	return mousePointerElement;
