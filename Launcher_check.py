@@ -5,8 +5,8 @@ import subprocess
 import threading
 import pygetwindow as gw
 from AutoMove_shared_variables import v, update_bool
-# Some functions are no longer used due to changes in code
 from initial_execution_funcs import subproces, init_var, var_false, read, write, string_to_int, int_reset
+# Some functions are no longer used due to changes in code
 
 LAUNCHER_TITLE = "Star Wars™: The Old Republic™" # Task title of launcher window
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             self.result = None
             self.launcher_window = None
 
-
+        # Keeps track of amount of errors being thrown
         def update_int(self) -> int: # Gets current number in txt and increments by 1
             try:
                 integer = read(FILE_PATH[2])

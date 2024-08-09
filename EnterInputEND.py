@@ -3,7 +3,7 @@ from pywinauto import Application
 import subprocess
 import time
 
-#When batch file opens, access the window and set focus on the input field
+# When batch file opens, access the window and set focus on the input field
 app = Application(backend='uia').connect(title='Mouse_Cursor_Size_Adjust')
 
 batch_window = app.window(title='Mouse_Cursor_Size_Adjust')

@@ -2,7 +2,7 @@
 
 start "" "F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\Launcher.exe"
 timeout /t 3 /nobreak > nul
-start /B python "F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\Launcher_check.py"
+start /B python ".\Launcher_check.py"
 
 set "targetProcess=swtor.exe"
  

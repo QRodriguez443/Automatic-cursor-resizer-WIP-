@@ -4,7 +4,7 @@ from AutoMove_shared_variables import v
 
 """
 Modifies mouse speed for a limited time so that when the cursor is directed to the 
-selection field using Launcher_check, it is not accidentally moved by user.
+selection field using Launcher_check, it is not moved from the text selection area.
 """
 SPI_SETMOUSESPEED = 0x71
 

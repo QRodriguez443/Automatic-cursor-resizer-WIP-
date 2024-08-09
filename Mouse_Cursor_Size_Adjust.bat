@@ -19,11 +19,15 @@ REM Detect if the task has ended
         tasklist | findstr /i %targetProcess% > nul
         
         if %errorlevel% neq 0 (
-            REM If False, start separate program that sets cursor size back to default, else go into the input standby.
+            REM If False and cursor size is not currently 20, start separate program that sets cursor size back to default, 
+            REM else go into the input standby.
             set targetEnd=true
-    
-            start CursorSizeAdjustDefault.py
-            timeout /t 3.5 /nobreak
+
+            reg query "HKCU\Control Panel\Cursors" /v CursorBaseSize /t REG_DWORD | find "0x20" && set "modificationAmount=true" || set "modificationAmount=false"
+            if %errorlevel% neq 0 (
+                start CursorSizeAdjust.py
+                timeout /t 3.5 /nobreak
+            )
             exit
     
         ) else (
@@ -46,7 +50,7 @@ REM Detect if the program has started
             goto :CreateCursor
     
         ) else (
-            REM Open separate program that detects when targetProcess is found, input will be set by EnterInput
+            REM Open separate program that detects when targetProcess is found, input will be triggered by EnterInput
             start /b EnterInput.py
             set /p input=Waiting for program to start... 
             timeout /t 2 /nobreak
@@ -55,7 +59,7 @@ REM Detect if the program has started
 
 :CreateCursor
     REM Search Registry for the default size of cursor, if the cursor size is default, 
-    REM then separate program launches to increase cursor size in control panel, and continue to next section. 
+    REM then a separate program launches to increase cursor size in control panel, and continue to next section. 
     reg query "HKCU\Control Panel\Cursors" /v CursorBaseSize /t REG_DWORD | find "0x20" && set "modificationAmount=true" || set "modificationAmount=false"
 
     if %errorlevel% neq 0 (
