@@ -6,6 +6,7 @@ as the in-game cursor is much smaller and hard to see (On higher resolutions).
 ## Requirements
 
 Python 3.12
+
 pip v. 24.0
 
 ## Installation
