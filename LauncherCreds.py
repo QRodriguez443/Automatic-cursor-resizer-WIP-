@@ -2,6 +2,10 @@ import pywinauto.keyboard as keyboard
 import pyperclip
 import random
 import numpy as np
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # An attempt to better obscure the vision of the password and increase security in the event an attacker uses a keylogger
 
 def has_two_digits(n):
@@ -48,8 +52,8 @@ shuffle_abc = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', '
 random.shuffle(shuffle_abc)
 characters = [] # User's password is appended into the array one by one
 
-USER_PASS = "012u3442" # User's created password  
-for i in USER_PASS: # Organize and separate each character into the array
+user_pass = os.environ.get('USER_PASS') # User's created password
+for i in user_pass: # Organize and separate each character into the array
     try:
         if prev_num is not None and has_two_digits(prev_num) is False:
             if prev_num != '0' and i != "u": # Handles double digits
