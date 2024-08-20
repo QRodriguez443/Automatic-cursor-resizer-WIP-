@@ -8,7 +8,7 @@ load_dotenv()
 
 # An attempt to better obscure the vision of the password and increase security in the event an attacker uses a keylogger
 
-def has_two_digits(n):
+def has_two_digits(n, currentNum):
     """
     Checks if an integer has exactly two distinct digits.
     
@@ -19,14 +19,13 @@ def has_two_digits(n):
         bool: True if the integer has exactly two distinct digits, False otherwise.
     """
     # Convert the integer to a string to access its digits
-    try:    
-        digits = set(str(abs(n)))
-        
-    except TypeError as e:
-        digits = set(str(abs(int(n))))
+
+    digit = set(str(abs(int(n))))
+    currentDigit = set(str(abs(int(currentNum))))
     
     # Check if the set of digits has exactly 2 elements
-    return len(digits) == 2
+    print(len(digit), len(currentDigit))
+    return len(digit) == 1 and len(currentDigit) == 1
 
 def contains_number(input_str):
     """
@@ -79,69 +78,80 @@ characters = [] # User's password is appended into the array one by one
 
 user_pass = os.environ.get('USER_PASS') # User's created password
 for j, i in enumerate(user_pass): # Organize and separate each character into the array
-    print(i)
-    if iterations == 2: # After the second iteration, store every previous, previous value of i (i - 2)
-        ind = user_pass.index(i)  
+    print(characters)
+    if iterations == 2: # After the second iteration, store every previous, previous value of i (j - 2)
         try:
-            prev_prev_value = int(characters[ind - 2])
+            prev_prev_value = int(user_pass[j - 2])
         except ValueError as e:
-            prev_prev_value = int(characters[ind - 3])
+            prev_prev_value = None
 
         print("prevprevnum:", prev_prev_value)
 
     if iterations != 2:
         iterations += 1
     try:
-        if prev_num is not None and has_two_digits(prev_num) is False:
-            if prev_num != '0' and i != "u": # Handles double digits
-                int(prev_num)
-                if int(i):
-                    print("There were 2 numbers")  
-                    characters.remove(int(prev_num))  
-                    double_digit_int = prev_num + i # combine the string of 2 individual nums
-                    characters.append(int(double_digit_int)) # append the string of 2 as a whole integer
-                    prev_num = int(double_digit_int) # To ensure proper functionality if user adds 'u' in front of double-digit
-                    continue # Skip iteration so as not to duplicate the current number to the list
+        if prev_num is not None:
+            print("ENTER VALUE")
+            prev_num_is_number = contains_number(prev_num)
+
+            if prev_num_is_number is not None and user_pass[j] is not None:
+                value = has_two_digits(prev_num_is_number, user_pass[j])
+            else:
+                value = False
+                
+            if value is True:
+                print("There were 2 numbers", prev_num, user_pass[j])  
+                del characters[-1]
+                print("REMOVE NUM")
+                double_digit_int = str(prev_num) + str(user_pass[j]) # combine the string of 2 individual nums
+                characters.append(int(double_digit_int)) # append the string of 2 as a whole integer
+                prev_num = int(double_digit_int) # To ensure proper functionality if user adds 'u' in front of double-digit
+                continue # Skip iteration so as not to duplicate the current number to the list
         
         print("prev_num set")    
-        if i != " " and i != "u":
-            prev_num = i
+        prev_num = user_pass[j]
         num = int(i)
         characters.append(num)
         double_digit_triggered = False
 
     except ValueError as e:
-        ind1 = user_pass.index(i)
-        if i == 'u':
+        if user_pass[j] == 'u':
             print("Entered u")
-            integer = contains_number(characters[ind1 - 1])
-            print("This is why i == prev_num: ", prev_prev_value, integer)
-            if prev_prev_value == integer:
+            print("This is why i == prev_num: ", prev_prev_value, user_pass[j - 1])
+
+            if prev_prev_value == user_pass[j - 1]:
                 print("REMOVING")
-                try:
-                    characters.remove(int(characters[ind1 - 1]))
-                except ValueError as e:
-                    characters.remove(int(characters[ind1 - 2]))
+                characters.remove(characters[j - 1])
+            elif j == 1: # In case "u" is presented before prev_prev_value is defined
+                characters.remove(characters[j - 1])
 
             characters.append(str(prev_num) + 'u')
 
-            if j == len(user_pass) - 1:
+            if prev_prev_value is None and j != len(user_pass) - 1: # If the last current character contains "u", then delete duplicate character behind it
+                str(characters[-1])
+                num = contains_number(characters[-1])
+                try:
+                    if num == characters[-2]:
+                        del characters[-2]
+                except IndexError as e:
+                    None
+                
+            if j == len(user_pass) - 1: # If the last character contains "u" then delete the duplicate character behind it
                 print("WORKED", characters[-2])
                 del characters[-2]
             double_digit_triggered = False
         else:
             print("prev_num set error")
-            if i != " " and i != "u":
-                prev_num = i
+            prev_num = user_pass[j]
             try:
                 num = int(i)
                 characters.append(num)
                 double_digit_triggered = False
 
             except ValueError as e: # If a space is encountered, skip iteration
+                print("Space Error")
                 continue
 print(characters)
-
 
 for i in range(len(characters)): # User password's translator, determines whether a letter is intended to be uppercase
     try:
