@@ -2,7 +2,7 @@
 
 start "" "F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\Launcher.exe"
 timeout /t 3 /nobreak > nul
-start /B python ".\Launcher_check.py"
+start /B python "%~dp0Launcher_check.py"
 
 set "targetProcess=swtor.exe"
  
@@ -19,7 +19,7 @@ set "targetProcess=swtor.exe"
             set target=true 
             goto :LOOP
             
-        ) else ( start /b "" "F:\SteamLibrary\steamapps\common\Star Wars - The Old Republic\Mouse_Cursor_Size_Adjust.bat" 
+        ) else ( start /b "" "%~dp0Mouse_Cursor_Size_Adjust.bat" 
                  exit )
 
 :Main

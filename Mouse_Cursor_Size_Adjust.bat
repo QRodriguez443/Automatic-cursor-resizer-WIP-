@@ -25,14 +25,14 @@ REM Detect if the task has ended
 
             reg query "HKCU\Control Panel\Cursors" /v CursorBaseSize /t REG_DWORD | find "0x20" && set "modificationAmount=true" || set "modificationAmount=false"
             if %errorlevel% neq 0 (
-                start CursorSizeAdjust.py
+                start /b python "%~dp0CursorSizeAdjust.py"
                 timeout /t 3.5 /nobreak
             )
             exit
     
         ) else (
             REM Start separate process that waits for targetProcess to end, restarts the loop when it has done so.
-            start /b EnterInputEND.py
+            start /b python "%~dp0EnterInputEND.py"
             set /p input=Waiting for program to end...
             goto :AltLoop 
         )
@@ -51,7 +51,7 @@ REM Detect if the program has started
     
         ) else (
             REM Open separate program that detects when targetProcess is found, input will be triggered by EnterInput
-            start /b EnterInput.py
+            start /b python "%~dp0EnterInput.py"
             set /p input=Waiting for program to start... 
             timeout /t 2 /nobreak
             goto :loop
@@ -66,7 +66,7 @@ REM Detect if the program has started
         exit /b
         
     ) else (
-        start CursorSizeAdjust.py
+        start /b python "%~dp0CursorSizeAdjust.py"
         timeout /t 4 /nobreak
         exit /b
     )
@@ -75,7 +75,7 @@ REM Conditional determines if this section has already been executed, if true, t
 
 if "%timerActivated?%"=="false" (
     REM Failsafe in case the process is not already running, once process is detected, continues to go back to the :loop section.
-    start /b EnterInput.py
+    start /b python "%~dp0EnterInput.py"
     set /p input=Waiting for program to start...
 
 ) else (

@@ -1,4 +1,5 @@
 import pywinauto.keyboard as keyboard
+import ctypes
 import pyperclip
 import random
 import numpy as np
@@ -45,23 +46,32 @@ def contains_number(input_str):
             elif current_num:
                 return int(current_num)
     except TypeError as e:
+        print("unimportant error", e)
         return input_str
     
     return int(current_num) if current_num else None
 
 # For every character copied, (an) extra random character(s) is/are added
-def copy_paste(array: list):
+def copy_paste(array: str):
 
     print(array)
     pyperclip.copy(array)
-    keyboard.send_keys('^v')
+    keyboard.send_keys('{'+ array +'}')
+    SendInput = ctypes.windll.user32.SendInput
+
+    # Virtual key code for 'F'
+    VK_F = 0x46
+    
+    # Press and release the 'F' key
+    SendInput(1, ctypes.pointer(ctypes.c_ulong(VK_F)), ctypes.sizeof(ctypes.c_ulong))
+    SendInput(1, ctypes.pointer(ctypes.c_ulong(VK_F | 0x0002)), ctypes.sizeof(ctypes.c_ulong))
  
     int_rand = random.randrange(0, 9)
     chosen_chars = []
 
     chosen_chars = random.choices(shuffle_abc, k=int_rand)
     absstr = ''.join(chosen_chars)
-    pyperclip.copy(absstr)
+    pyperclip.copy(absstr)  
 
 prev_num = None
 prev_prev_value = None
@@ -70,8 +80,8 @@ not_int_triggered = False
 double_digit_triggered = False
 iterations = 0
 
-abc = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' '!', '@', '#', '$', '%', '^', '&', '*'])
-shuffle_abc = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' '!', '@', '#', '$', '%', '^', '&', '*'])
+abc = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*'])
+shuffle_abc = np.array(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*'])
 
 random.shuffle(shuffle_abc)
 characters = [] # User's password is appended into the array one by one

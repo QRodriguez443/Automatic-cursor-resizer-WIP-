@@ -90,8 +90,8 @@ if __name__ == "__main__":
                             alrdy_executed = True
                             print("activating")
 
-                            launcher_window[0].restore() # In case window is minimized
-                            launcher_window[0].activate() # Activate the first window in the list
+                            launcher_window[-1].restore() # In case window is minimized
+                            launcher_window[-1].activate() # Activate the first window in the list
 
                             # Get current mouse position, then move mouse over selection field
                             original_mouse_position = pyautogui.position()
